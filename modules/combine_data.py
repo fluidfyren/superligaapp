@@ -93,8 +93,8 @@ def combine_all(df):
     teams = get_cumulative_points(teams)
     teams = get_opponents_points(teams, round_nr)
     teams = give_colors(teams)
-    pickle_teams(teams)
-    return teams
+    #pickle_teams(teams)
+    return teams, round_nr
     
 if __name__ == "__main__":
     pass

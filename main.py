@@ -13,15 +13,17 @@ figures = [p]
 
 
 df = read_thesportsdb.read_from_thesportsdb()
-teams = combine_data.combine_all(df)
+teams, round_nr = combine_data.combine_all(df)
 team_list = list(teams.keys())
 
 
 def callback_barplot():
-    dataframes = []
-    for team in teams:
-        dataframes.append(get_files.read_file(f'data/teams/{team}.pkl'))
-    update_plots.bar_plot_teams2(p, teams, dataframes, figures, runde=10)
+    #dataframes = []
+    #for team in teams:
+    #    dataframes.append(get_files.read_file(f'data/teams/{team}.pkl'))
+    #for team in teams:
+    #    print(list(teams[team]['df']))
+    update_plots.bar_plot_teams2(p, team_list, teams, figures, runde=round_nr)
 
 
 
@@ -29,8 +31,8 @@ button3 = Button(label="Se kommende modstandere")
 button3.on_click(callback_barplot)
 
 
-teams = team_list
-select = Select(title="Hold: (kan pt ikke plottes)", value=teams[0], options=teams)
+
+select = Select(title="Hold: (kan pt ikke plottes)", value=team_list[0], options=team_list)
 select.js_on_change("value", CustomJS(code="""
     console.log('select: value=' + this.value, this.toString())
 """))
