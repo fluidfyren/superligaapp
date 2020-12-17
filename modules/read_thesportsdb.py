@@ -6,12 +6,12 @@ Created on Mon Dec 14 21:57:11 2020
 """
 import pandas as pd
 import requests
-from modules import combine_data
 
 def read_from_thesportsdb():
     url = 'https://www.thesportsdb.com/api/v1/json/1/eventsseason.php?id=4340&s=2020-2021'
 
     response = requests.request("GET", url)
+    print(response)
     text = response.text
 
     df = pd.read_json(text)
