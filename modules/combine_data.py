@@ -77,12 +77,12 @@ def pickle_teams(teams):
         pkl.dump(teams[team], f)
         f.close()
 
-def give_colors(teams):
-    colors = ['yellow', 'violet', 'tomato', 'teal', 'sienna', 'skyblue',
-              'red', 'seagreen', 'navy', 'lime', 'lightsalmon', 'darkorchid']
-    for i, team in enumerate(teams):
-        teams[team]['color'] = colors[i]
-    return teams
+#def give_colors(teams):
+#    colors = ['yellow', 'violet', 'tomato', 'teal', 'sienna', 'skyblue',
+#              'red', 'seagreen', 'navy', 'lime', 'lightsalmon', 'darkorchid']
+#    for i, team in enumerate(teams):
+#        teams[team]['color'] = colors[i]
+#    return teams
 
 
 def combine_all(df):
@@ -92,7 +92,7 @@ def combine_all(df):
     teams = get_goals_and_points(teams)
     teams = get_cumulative_points(teams)
     teams = get_opponents_points(teams, round_nr)
-    teams = give_colors(teams)
+#    teams = give_colors(teams)
     #pickle_teams(teams)
     return teams, round_nr
     
