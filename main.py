@@ -12,15 +12,15 @@ p = figure()
 
 
 def callback_barplot():
-    p = figure(x_range=[], tools="hover", y_range=(0,3))
     league = read_thesportsdb.leagues[select.value]
     df = read_thesportsdb.read_from_thesportsdb(league)
     teams, round_nr = combine_data.combine_all(df)
     team_list = list(teams.keys())
-    if select2.value == 'Opponent Points':
-        update_plots.bar_plot_teams2(p, team_list, teams, runde=round_nr)
-    elif select2.value == 'Opponent Shape':
-        update_plots.bar_plot_teams_shape(p, team_list, teams, runde=round_nr)
+    p = update_plots.bar_plot_teams(team_list, teams, runde=round_nr, parameter=select2.value)
+    #if select2.value == 'Opponent Points':
+    #    update_plots.bar_plot_teams2(p, team_list, teams, runde=round_nr)
+    #elif select2.value == 'Opponent Shape':
+    #    update_plots.bar_plot_teams_shape(p, team_list, teams, runde=round_nr)
     layout.children[0].children[2] = p
 
 
@@ -35,7 +35,7 @@ select.js_on_change("value", CustomJS(code="""
 """))
 
 
-headers = ['Opponent Points', 'Opponent Shape']
+headers = ['Opponent avg points', 'Opponent Shape','Relation avg points']
 select2 = Select(title="Data", value=headers[0], options=headers)
 select2.js_on_change("value", CustomJS(code="""
     console.log('select: value=' + this.value, this.toString())
@@ -44,5 +44,5 @@ select2.js_on_change("value", CustomJS(code="""
 
 
 # put the button and plot in a layout and add to the document
-layout = layout(column(row(button3), row(select, select2), row(p)))
+layout = layout(column(button3, row(select, select2), row(p)))
 curdoc().add_root(layout)

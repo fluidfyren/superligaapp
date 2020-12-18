@@ -54,9 +54,23 @@ def read_from_thesportsdb_players(league_id='4340'):
     
     return matches
 
+def read_from_match(match_id):
+    url = f'https://www.thesportsdb.com/api/v1/json/4013017/lookuptimeline.php?id={match_id}'
 
+    response = requests.request("GET", url)
+    print(response)
+    text = response.text
+    if text != '{"timeline":null}':
+        text = pd.read_json(text)
+        
+        events = []
+        for index, row in text.iterrows():
+            events.append(row[0])
+        return events
+    return text
 
 if __name__ == "__main__":
     #df_new = read_from_thesportsdb(league_id='4328')
     #round_nr = df_new.dropna()['Round'].max()
     df = read_from_thesportsdb_players(league_id='4328')
+    df_match = read_from_match('1032737')

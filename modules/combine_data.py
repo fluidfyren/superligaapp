@@ -63,12 +63,13 @@ def get_opponents_points(teams, round_nr):
             else:
                 teams[team]['df'].at[i,'Opponent avg points'] = teams[modstander]['df'].at[round_nr,'Avg Points']
                 teams[team]['df'].at[i,'Opponent Shape'] = teams[modstander]['df'].at[round_nr,'Shape']
+
     return teams
 
 
 def get_point_relation(teams):
     for team in teams:
-        teams[team]['df']['Point_forhold'] = teams[team]['df']['Mean Points']/teams[team]['df']['Modstander Point']
+        teams[team]['df']['Relation avg points'] = teams[team]['df']['Avg Points']/teams[team]['df']['Opponent avg points']
     return teams
 
 def pickle_teams(teams):
@@ -92,6 +93,7 @@ def combine_all(df):
     teams = get_goals_and_points(teams)
     teams = get_cumulative_points(teams)
     teams = get_opponents_points(teams, round_nr)
+    teams = get_point_relation(teams)
 #    teams = give_colors(teams)
     #pickle_teams(teams)
     return teams, round_nr
