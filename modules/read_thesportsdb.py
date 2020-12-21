@@ -8,7 +8,7 @@ import pandas as pd
 import requests
 
 leagues = {'Superligaen':'4340','Premier League':'4328', 'Bundesliga':'4331',
-           'La Liga':'4335'}
+           'La Liga':'4335', 'Serie A':"4334"}
 
 def read_from_thesportsdb(league_id='4340'):
     url = f'https://www.thesportsdb.com/api/v1/json/4013017/eventsseason.php?id={league_id}&s=2020-2021'
@@ -25,14 +25,16 @@ def read_from_thesportsdb(league_id='4340'):
         matches.append(row[0])
     
 
-    df_new = pd.DataFrame(columns=['Round', 'HomeTeam', 'AwayTeam', 'HomeGoals', 'AwayGoals'])
+    df_new = pd.DataFrame(columns=['Round', 'HomeTeam', 'AwayTeam', 'HomeGoals', 'AwayGoals', 'Date'])
 
     for i, match in enumerate(matches):
         df_new = df_new.append({'Round':pd.to_numeric(match['intRound']),
                             'HomeTeam':match['strHomeTeam'],
                             'AwayTeam':match['strAwayTeam'],
                             'HomeGoals':pd.to_numeric(match['intHomeScore']),
-                            'AwayGoals':pd.to_numeric(match['intAwayScore'])}, 
+                            'AwayGoals':pd.to_numeric(match['intAwayScore']),
+                            'Date':match['dateEvent']
+                            }, 
                            ignore_index=True)
 
     return df_new
@@ -71,6 +73,6 @@ def read_from_match(match_id):
 
 if __name__ == "__main__":
     #df_new = read_from_thesportsdb(league_id='4328')
-    #round_nr = df_new.dropna()['Round'].max()
+    #round_nr = df_new.dropna()['round()d'].max()
     df = read_from_thesportsdb_players(league_id='4328')
     df_match = read_from_match('1032737')

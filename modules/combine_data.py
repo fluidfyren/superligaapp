@@ -20,6 +20,7 @@ def create_teams_dict(df, team_list):
         teams[team] = {}
         teams[team]['df'] = df[(df['HomeTeam'] == team) | (df['AwayTeam'] == team)]
         teams[team]['df'].reset_index(inplace=True, drop=True)
+        teams[team]['matches played'] = teams[team]['df']['HomeGoals'].count()
     return teams
 
 
@@ -72,6 +73,11 @@ def get_point_relation(teams):
         teams[team]['df']['Relation avg points'] = teams[team]['df']['Avg Points']/teams[team]['df']['Opponent avg points']
     return teams
 
+
+
+def matches_played(teams):
+    pass
+
 def pickle_teams(teams):
     for team in teams:
         f = open(f'data/teams/{team}.pkl', 'wb')
@@ -99,5 +105,8 @@ def combine_all(df):
     return teams, round_nr
     
 if __name__ == "__main__":
-    pass
+    import read_thesportsdb
+    df = read_thesportsdb.read_from_thesportsdb(league_id='4328')
+    team_list = get_team_list(df)
+    teams = create_teams_dict(df, team_list)
             
