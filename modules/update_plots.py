@@ -9,106 +9,9 @@ import math
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.annotations import Title
 
-def bar_plot_teams(team_list, teams, runde, parameter):
-    
-    
-    points1 = np.zeros(len(team_list))
-    points2 = np.zeros(len(team_list))
-    points3 = np.zeros(len(team_list))
-    
-    modstander1 = []
-    modstander2 = []
-    modstander3 = []
-    
-    for i, team in enumerate(teams):
-        points1[i] = teams[team]['df'][parameter][runde+0]
-        points2[i] = teams[team]['df'][parameter][runde+1]
-        points3[i] = teams[team]['df'][parameter][runde+2]
-        modstander1.append(teams[team]['df']['Opponent'][runde+0])
-        modstander2.append(teams[team]['df']['Opponent'][runde+1])
-        modstander3.append(teams[team]['df']['Opponent'][runde+2])
-    
-    points_mean = (points1 + points2 + points3)/3
-    
-    out_arr = np.argsort(points1)
-    out_arr = np.argsort(points_mean)
-    
-    points1 = points1[out_arr]
-    points2 = points2[out_arr]
-    points3 = points3[out_arr]
-    points_mean = points_mean[out_arr]
-    
-    team_list = list(np.array(team_list)[out_arr])
-    modstander1 = list(np.array(modstander1)[out_arr])
-    modstander2 = list(np.array(modstander2)[out_arr])
-    modstander3 = list(np.array(modstander3)[out_arr])
-    
-    
-    data = {'teams' : team_list,
-            'runde1' : points1,
-            'runde2' : points2,
-            'runde3' : points3,
-            'middel' : points_mean,
-            'modstander1' : modstander1,
-            'modstander2' : modstander2,
-            'modstander3' : modstander3}
-    
-    source = ColumnDataSource(data=data)
-    y_max = math.ceil(max(max(points1), max(points2), max(points3)))
-    
-    
-    
-    p = figure(x_range=[], title=f'{parameter}', y_range=(0,max(3,y_max)))
-
-    
-
-    
-    
-    
-    
-    p.x_range.factors = team_list
-
-    p.vbar(x=dodge('teams', -0.30, range=p.x_range), top='runde1', width=0.15, source=source,
-       color="#c9d9d3", legend_label=f"{parameter} in round {runde+1}")
-    
-    p.vbar(x=dodge('teams', -0.1, range=p.x_range), top='runde2', width=0.15, source=source,
-       color="#718dbf", legend_label=f"{parameter} in round {runde+2}")
-    
-    p.vbar(x=dodge('teams', +0.1, range=p.x_range), top='runde3', width=0.15, source=source,
-       color="#e84d60", legend_label=f"{parameter} in round {runde+3}")
-    
-    p.vbar(x=dodge('teams', +0.3, range=p.x_range), top='middel', width=0.15, source=source,
-       color="black", legend_label=f"Mean of {parameter} in round {runde+1}, {runde+2} and {runde+3}")
-    
-    
-    callback = CustomJS(args=dict(title=p.title, data=source), code="""
-        var a = cb_data.index.indices;
-        if (a.length > 0) {
-                var b = a[0];
-                var team = data.attributes.data.teams[b];
-                var point = data.attributes.data.runde1[b]
-                console.log(point);
-                title.text = team;
-        }
-    """)
-    
-    
-    p.add_tools(HoverTool(tooltips=[("Team", "@teams"), ("Modstander 1", "@modstander1 @runde1"),
-                                    ("Modstander 2", "@modstander2 @runde2"),
-                                    ("Modstander 3", "@modstander3 @runde3")], callback=callback))
-    
-    p.x_range.range_padding = 0.1
-    p.xaxis.major_label_orientation = 0.5
-    p.xgrid.grid_line_color = None
-    
-    p.legend.location = "top_left"
-    
-    return p
-
-
 
 def bar_plot_teams2(team_list, teams, runde, parameter):
-    p2 = figure(x_range=(1,runde), y_range=(0,30))
+    p2 = figure(x_range=(1,runde), y_range=(0,runde*3))
     data1 = {'round':teams[team_list[0]]['df']['Round'],
              'x':teams[team_list[0]]['df']['Round'], 
              'y':teams[team_list[0]]['df']['Round']}
@@ -125,9 +28,9 @@ def bar_plot_teams2(team_list, teams, runde, parameter):
     legend = Legend(items=[('', [line1]),
                            ('', [line2]),
                            ('', [line3]),
-                           ], location="top_center")
+                           ], location="top_left")
     
-    p2.add_layout(legend, 'right')
+    p2.add_layout(legend)
     
     points1 = np.zeros(len(team_list))
     points2 = np.zeros(len(team_list))
@@ -174,33 +77,31 @@ def bar_plot_teams2(team_list, teams, runde, parameter):
     y_max = math.ceil(max(max(points1), max(points2), max(points3)))
     
     
+ 
     
     p = figure(x_range=[], title=f'{parameter}', y_range=(0,max(3,y_max)))
-
-    
-
-    
-    
     
     
     p.x_range.factors = team_list
 
-    p.vbar(x=dodge('teams', -0.30, range=p.x_range), top='runde1', width=0.15, source=source,
+    bar1 = p.vbar(x=dodge('teams', -0.30, range=p.x_range), top='runde1', width=0.15, source=source,
        color="#c9d9d3", legend_label=f"{parameter} in round {runde+1}")
     
-    p.vbar(x=dodge('teams', -0.1, range=p.x_range), top='runde2', width=0.15, source=source,
+    bar2 =  p.vbar(x=dodge('teams', -0.1, range=p.x_range), top='runde2', width=0.15, source=source,
        color="#718dbf", legend_label=f"{parameter} in round {runde+2}")
     
-    p.vbar(x=dodge('teams', +0.1, range=p.x_range), top='runde3', width=0.15, source=source,
+    bar3 = p.vbar(x=dodge('teams', +0.1, range=p.x_range), top='runde3', width=0.15, source=source,
        color="#e84d60", legend_label=f"{parameter} in round {runde+3}")
     
-    p.vbar(x=dodge('teams', +0.3, range=p.x_range), top='middel', width=0.15, source=source,
+    bar4 = p.vbar(x=dodge('teams', +0.3, range=p.x_range), top='middel', width=0.15, source=source,
        color="black", legend_label=f"Mean of {parameter} in round {runde+1}, {runde+2} and {runde+3}")
     
     
-    callback = CustomJS(args=dict(title=p.title, data=source, dataline=sourceline, plotline1=line1, 
+    callback = CustomJS(args=dict(title=p2.title, data=source, dataline=sourceline, plotline1=line1, 
                                   plotline2=line2, plotline3=line3, legend=legend), code="""
         var a = cb_data.index.indices;
+        var a2 = cb_data;
+        console.log(a2)
         if (a.length > 0) {
                 var b = a[0];
                 var team = data.attributes.data.teams[b];
@@ -231,7 +132,8 @@ def bar_plot_teams2(team_list, teams, runde, parameter):
     
     p.add_tools(HoverTool(tooltips=[("Team", "@teams"), ("Modstander 1", "@modstander1 @runde1"),
                                     ("Modstander 2", "@modstander2 @runde2"),
-                                    ("Modstander 3", "@modstander3 @runde3")], callback=callback))
+                                    ("Modstander 3", "@modstander3 @runde3")], callback=callback, 
+                          renderers=[bar1, bar2, bar3, bar4]))
     
     p.x_range.range_padding = 0.1
     p.xaxis.major_label_orientation = 0.5
