@@ -11,7 +11,7 @@ from bokeh.models.annotations import Title
 
 
 def bar_plot_teams2(team_list, teams, runde, parameter):
-    p2 = figure(x_range=(1,runde), y_range=(0,runde*3))
+    p2 = figure(x_range=(1,runde), y_range=(0,30))
     data1 = {'round':teams[team_list[0]]['df']['Round'],
              'x':teams[team_list[0]]['df']['Round'], 
              'y':teams[team_list[0]]['df']['Round']}
@@ -30,7 +30,7 @@ def bar_plot_teams2(team_list, teams, runde, parameter):
                            ('', [line3]),
                            ], location="top_left")
     
-    p2.add_layout(legend)
+    p2.add_layout(legend, 'right')
     
     points1 = np.zeros(len(team_list))
     points2 = np.zeros(len(team_list))
@@ -100,10 +100,12 @@ def bar_plot_teams2(team_list, teams, runde, parameter):
     callback = CustomJS(args=dict(title=p2.title, data=source, dataline=sourceline, plotline1=line1, 
                                   plotline2=line2, plotline3=line3, legend=legend), code="""
         var a = cb_data.index.indices;
-        var a2 = cb_data;
+        var a2 = Math.floor(cb_data.geometry.x);
         console.log(a2)
-        if (a.length > 0) {
-                var b = a[0];
+        //if (a.length > 0) {
+        if (Number.isInteger(a2)) {
+                //var b = a[0];
+                var b = a2;
                 var team = data.attributes.data.teams[b];
                 var point = data.attributes.data.runde1[b]
                 console.log(point);
@@ -132,8 +134,7 @@ def bar_plot_teams2(team_list, teams, runde, parameter):
     
     p.add_tools(HoverTool(tooltips=[("Team", "@teams"), ("Modstander 1", "@modstander1 @runde1"),
                                     ("Modstander 2", "@modstander2 @runde2"),
-                                    ("Modstander 3", "@modstander3 @runde3")], callback=callback, 
-                          renderers=[bar1, bar2, bar3, bar4]))
+                                    ("Modstander 3", "@modstander3 @runde3")], callback=callback, renderers=[bar1, bar2, bar3, bar2]))
     
     p.x_range.range_padding = 0.1
     p.xaxis.major_label_orientation = 0.5
